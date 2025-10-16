@@ -1,5 +1,7 @@
 import random
 import typing as tp
+from math import gcd
+from typing import Tuple
 
 
 def is_prime(n: int) -> bool:
@@ -39,12 +41,21 @@ def multiplicative_inverse(e: int, phi: int) -> int:
     >>> multiplicative_inverse(7, 40)
     23
     """
-    # PUT YOUR CODE HERE
-    pass
+    def extended_gcd(a, b):
+        if b == 0:
+            return a, 1, 0
+        gcd, x1, y1 = extended_gcd(b, a % b)
+        x = y1
+        y = x1 - (a // b) * y1
+        return gcd, x, y
 
-import random
-from math import gcd
-from typing import Tuple
+    gcd, x, y = extended_gcd(e, phi)
+    if gcd != 1:
+        raise ValueError("Inverse doesn't exist")
+    else:
+        return x % phi
+
+
 def generate_keypair(p: int, q: int) -> tp.Tuple[tp.Tuple[int, int], tp.Tuple[int, int]]:
     if not (is_prime(p) and is_prime(q)):
         raise ValueError("Both numbers must be prime.")

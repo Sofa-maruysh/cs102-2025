@@ -1,7 +1,6 @@
 import random
 import typing as tp
-from math import gcd
-from typing import Tuple
+
 
 
 def is_prime(n: int) -> bool:
@@ -13,11 +12,17 @@ def is_prime(n: int) -> bool:
     >>> is_prime(8)
     False
     """
-    if n <= 1:
-        return False  
-    for i in range(2, int(n**0.5) + 1):
-        if n % i == 0:
-            return False
+    if n < 2:        
+        return False    
+    if n == 2:        
+        return True    
+    if n % 2 == 0:        
+        return False    
+    i = 3    
+    while i * i <= n:        
+        if n % i == 0:            
+            return False        
+        i += 2    
     return True
 
 
@@ -30,7 +35,9 @@ def gcd(a: int, b: int) -> int:
     1
     """
     while b != 0:
-        a, b = b, a % b
+       temp = a % b        
+       a = b        
+       b = temp    
     return a
 
 
@@ -41,19 +48,14 @@ def multiplicative_inverse(e: int, phi: int) -> int:
     >>> multiplicative_inverse(7, 40)
     23
     """
-    def extended_gcd(a, b):
-        if b == 0:
-            return a, 1, 0
-        gcd, x1, y1 = extended_gcd(b, a % b)
-        x = y1
-        y = x1 - (a // b) * y1
-        return gcd, x, y
-
-    gcd, x, y = extended_gcd(e, phi)
-    if gcd != 1:
-        raise ValueError("Inverse doesn't exist")
-    else:
-        return x % phi
+    old_r, r = e, phi    
+    old_s, s = 1, 0    
+    while r != 0:        
+        q = old_r // r        
+        old_r, r = r, old_r - q * r        
+        old_s, s = s, old_s - q * s    
+    d = old_s % phi    
+    return d
 
 
 def generate_keypair(p: int, q: int) -> tp.Tuple[tp.Tuple[int, int], tp.Tuple[int, int]]:
@@ -69,13 +71,11 @@ def generate_keypair(p: int, q: int) -> tp.Tuple[tp.Tuple[int, int], tp.Tuple[in
     phi = (p - 1) * (q - 1)
 
     # Choose an integer e such that e and phi(n) are coprime
-    e = random.randrange(1, phi)
+    e = random.randrange(2, phi)
 
     # Use Euclid's Algorithm to verify that e and phi(n) are coprime
-    g = gcd(e, phi)
-    while g != 1:
-        e = random.randrange(1, phi)
-        g = gcd(e, phi)
+    while gcd(e, phi) != 1:        
+        e = random.randrange(2, phi)
 
     # Use Extended Euclid's Algorithm to generate the private key
     d = multiplicative_inverse(e, phi)
@@ -90,7 +90,7 @@ def encrypt(pk: tp.Tuple[int, int], plaintext: str) -> tp.List[int]:
     key, n = pk
     # Convert each letter in the plaintext to numbers based on
     # the character using a^b mod m
-    cipher = [(ord(char) ** key) % n for char in plaintext]
+    cipher = [pow(ord(ch), key, n) for ch in plaintext]
     # Return the array of bytes
     return cipher
 
@@ -99,22 +99,19 @@ def decrypt(pk: tp.Tuple[int, int], ciphertext: tp.List[int]) -> str:
     # Unpack the key into its components
     key, n = pk
     # Generate the plaintext based on the ciphertext and key using a^b mod m
-    plain = [chr((char ** key) % n) for char in ciphertext]
+    plain_codes = [pow(x, key, n) for x in ciphertext]
     # Return the array of bytes as a string
-    return "".join(plain)
+    return "".join(chr(x) for x in plain_codes)
 
 
 if __name__ == "__main__":
-    print("RSA Encrypter/ Decrypter")
-    p = int(input("Enter a prime number (17, 19, 23, etc): "))
-    q = int(input("Enter another prime number (Not one you entered above): "))
-    print("Generating your public/private keypairs now . . .")
-    public, private = generate_keypair(p, q)
-    print("Your public key is ", public, " and your private key is ", private)
-    message = input("Enter a message to encrypt with your private key: ")
-    encrypted_msg = encrypt(private, message)
-    print("Your encrypted message is: ")
-    print("".join(map(lambda x: str(x), encrypted_msg)))
-    print("Decrypting message with public key ", public, " . . .")
-    print("Your message is:")
+    print("RSA Encrypter/Decrypter")    
+    print("Generating your public/private keypairs now . . .")   
+    public, private = generate_keypair(p, q)    
+    print("Your public key is", public, "and your private key is", private)    
+    message = input("Enter a message to encrypt with your private key: ")    
+    encrypted_msg = encrypt(private, message)    
+    print("Your encrypted message is:")    
+    print("Decrypting message with public key", public, " . . .")    
+    print("Your message is:")    
     print(decrypt(public, encrypted_msg))

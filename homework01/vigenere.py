@@ -10,22 +10,25 @@ def encrypt_vigenere(plaintext: str, keyword: str) -> str:
     """
     ciphertext = ""
     
-    keyword = keyword.lower()
-    key_length = len(keyword)
-    key_index = 0
+    j = 0    
+    key_len = len(keyword)   
 
-    for char in plaintext:
-        if char.isalpha():
-            shift = ord(keyword[key_index % key_length]) - ord('a')
-            if char.isupper():
-                base = ord('A')
-                ciphertext += chr((ord(char) - base + shift) % 26 + base)
-            else:
-                base = ord('a')
-                ciphertext += chr((ord(char) - base + shift) % 26 + base)
-            key_index += 1
-        else:
-            ciphertext += char
+    for letter in plaintext:        
+        if letter.isalpha():            
+            key_letter = keyword[j % key_len]            
+            if key_letter.isupper():                
+                shift = ord(key_letter) - ord('A')            
+            else:                
+                shift = ord(key_letter) - ord('a')            
+            if letter.isupper():                
+                new_code = (ord(letter) - ord('A') + shift) % 26 + ord('A')                
+                ciphertext += chr(new_code)            
+            else:                
+                new_code = (ord(letter) - ord('a') + shift) % 26 + ord('a')                
+                ciphertext += chr(new_code)            
+                j += 1        
+        else:            
+            ciphertext += letter
     return ciphertext
 
 
@@ -41,20 +44,22 @@ def decrypt_vigenere(ciphertext: str, keyword: str) -> str:
     """
     plaintext = ""
 
-    keyword = keyword.lower()
-    key_length = len(keyword)
-    key_index = 0
-
-    for char in ciphertext:
-        if char.isalpha():
-            shift = ord(keyword[key_index % key_length]) - ord('a')
-            if char.isupper():
-                base = ord('A')
-                plaintext += chr((ord(char) - base - shift) % 26 + base)
-            else:
-                base = ord('a')
-                plaintext += chr((ord(char) - base - shift) % 26 + base)
-            key_index += 1
-        else:
-            plaintext += char
+    j = 0       
+    key_len = len(keyword)    
+    for letter in ciphertext:        
+        if letter.isalpha():            
+            key_letter = keyword[j % key_len]            
+            if key_letter.isupper():                
+                shift = ord(key_letter) - ord('A')            
+            else:                
+                shift = ord(key_letter) - ord('a')            
+            if letter.isupper():                
+                new_code = (ord(letter) - ord('A') - shift) % 26 + ord('A')                
+                plaintext += chr(new_code)            
+            else:                
+                new_code = (ord(letter) - ord('a') - shift) % 26 + ord('a')                
+                plaintext += chr(new_code)            
+                j += 1        
+        else:            
+            plaintext += letter
     return plaintext

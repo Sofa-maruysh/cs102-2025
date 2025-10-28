@@ -12,18 +12,22 @@ def encrypt_caesar(plaintext: str, shift: int = 3) -> str:
     ''
     """
     ciphertext = ""
-    for char in plaintext:
-        if char.isupper():
-            ciphertext += chr((ord(char) - ord('A') + shift) % 26 + ord('A'))
-        elif char.islower():
-            ciphertext += chr((ord(char) - ord('a') + shift) % 26 + ord('a'))
+    for letter in plaintext :
+        if 'A' <= letter <= 'Z':
+            code = ord(letter)
+            new_code = (code - ord('A') + shift) % 26 + ord('A')
+            ciphertext += chr(new_code)
+        elif 'a' <= letter <= 'z':
+            code = ord(letter)            
+            new_code = (code - ord('a') + shift) % 26 + ord('a')
+            ciphertext += chr(new_code)
         else:
-            ciphertext += char
+            ciphertext += letter
     return ciphertext
 
 def decrypt_caesar(ciphertext: str, shift: int = 3) -> str:
     """
-    Decrypts a ciphertext using a Caesar cipher.
+    Decrypts a ciphertext using a Caesar cipher.python -m unittest discover
 
     >>> decrypt_caesar("SBWKRQ")
     'PYTHON'
@@ -35,12 +39,16 @@ def decrypt_caesar(ciphertext: str, shift: int = 3) -> str:
     ''
     """
     plaintext = ""
-    for char in ciphertext:
-        if char.isupper():
-            plaintext += chr((ord(char) - ord('A') - shift) % 26 + ord('A'))
-        elif char.islower():
-            plaintext += chr((ord(char) - ord('a') - shift) % 26 + ord('a'))
+    for letter in ciphertext:
+        if 'A' <= letter <= 'Z':            
+            code = ord(letter)            
+            new_code = (code - ord('A') - shift) % 26 + ord('A')                
+            plaintext += chr(new_code)
+        elif 'a' <= letter <= 'z':            
+            code = ord(letter)            
+            new_code = (code - ord('a') - shift) % 26 + ord('a')            
+            plaintext += chr(new_code)
         else:
-            plaintext += char
+            plaintext += letter
     return plaintext
 

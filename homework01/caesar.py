@@ -12,18 +12,19 @@ def encrypt_caesar(plaintext: str, shift: int = 3) -> str:
     ''
     """
     ciphertext = ""
-    for letter in plaintext :
-        if 'A' <= letter <= 'Z':
+    for letter in plaintext:
+        if "A" <= letter <= "Z":
             code = ord(letter)
-            new_code = (code - ord('A') + shift) % 26 + ord('A')
+            new_code = (code - ord("A") + shift) % 26 + ord("A")
             ciphertext += chr(new_code)
-        elif 'a' <= letter <= 'z':
-            code = ord(letter)            
-            new_code = (code - ord('a') + shift) % 26 + ord('a')
+        elif "a" <= letter <= "z":
+            code = ord(letter)
+            new_code = (code - ord("a") + shift) % 26 + ord("a")
             ciphertext += chr(new_code)
         else:
             ciphertext += letter
     return ciphertext
+
 
 def decrypt_caesar(ciphertext: str, shift: int = 3) -> str:
     """
@@ -40,15 +41,14 @@ def decrypt_caesar(ciphertext: str, shift: int = 3) -> str:
     """
     plaintext = ""
     for letter in ciphertext:
-        if 'A' <= letter <= 'Z':            
-            code = ord(letter)            
-            new_code = (code - ord('A') - shift) % 26 + ord('A')                
+        if "A" <= letter <= "Z":
+            code = ord(letter)
+            new_code = (code - ord("A") - shift) % 26 + ord("A")
             plaintext += chr(new_code)
-        elif 'a' <= letter <= 'z':            
-            code = ord(letter)            
-            new_code = (code - ord('a') - shift) % 26 + ord('a')            
+        elif "a" <= letter <= "z":
+            code = ord(letter)
+            new_code = (code - ord("a") - shift) % 26 + ord("a")
             plaintext += chr(new_code)
         else:
             plaintext += letter
     return plaintext
-

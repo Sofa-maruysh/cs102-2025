@@ -1,65 +1,62 @@
+from typing import List
+
 def encrypt_vigenere(plaintext: str, keyword: str) -> str:
     """
-    Encrypts plaintext using a Vigenere cipher.
-    >>> encrypt_vigenere("PYTHON", "A")
-    'PYTHON'
-    >>> encrypt_vigenere("python", "a")
-    'python'
-    >>> encrypt_vigenere("ATTACKATDAWN", "LEMON")
-    'LXFOPVEFRNHR'
+    Encrypts plaintext using a Vigenère cipher.
+    Keeps non-alphabetic characters unchanged.
+    Preserves the case of letters.
+    Advances the key over ALL characters (including spaces/punct).
     """
-    ciphertext = ""
+    if not keyword:
+        raise ValueError("Keyword must be non-empty")
+    if not keyword.isalpha():
+        raise ValueError("Keyword must only contain letters (A-Z/a-z)")
 
+    result = []
     j = 0
     key_len = len(keyword)
+    key_upper = keyword.upper()
 
-    for letter in plaintext:
-        if letter.isalpha():
-            key_letter = keyword[j % key_len]
-            if key_letter.isupper():
-                shift = ord(key_letter) - ord("A")
+    for ch in plaintext:
+        shift = ord(key_upper[j % key_len]) - ord('A')
+        if ch.isalpha():
+            if ch.isupper():
+                result.append(chr((ord(ch) - ord('A') + shift) % 26 + ord('A')))
             else:
-                shift = ord(key_letter) - ord("a")
-            if letter.isupper():
-                new_code = (ord(letter) - ord("A") + shift) % 26 + ord("A")
-                ciphertext += chr(new_code)
-            else:
-                new_code = (ord(letter) - ord("a") + shift) % 26 + ord("a")
-                ciphertext += chr(new_code)
-                j += 1
+                result.append(chr((ord(ch) - ord('a') + shift) % 26 + ord('a')))
         else:
-            ciphertext += letter
-    return ciphertext
+            result.append(ch)
+        j += 1  # advance key regardless of ch type
+
+    return ''.join(result)
 
 
 def decrypt_vigenere(ciphertext: str, keyword: str) -> str:
     """
-    Decrypts a ciphertext using a Vigenere cipher.
-    >>> decrypt_vigenere("PYTHON", "A")
-    'PYTHON'
-    >>> decrypt_vigenere("python", "a")
-    'python'
-    >>> decrypt_vigenere("LXFOPVEFRNHR", "LEMON")
-    'ATTACKATDAWN'
+    Decrypts ciphertext using a Vigenère cipher.
+    Keeps non-alphabetic characters unchanged.
+    Preserves the case of letters.
+    Advances the key over ALL characters (including spaces/punct).
     """
-    plaintext = ""
+    if not keyword:
+        raise ValueError("Keyword must be non-empty")
+    if not keyword.isalpha():
+        raise ValueError("Keyword must only contain letters (A-Z/a-z)")
 
+    result = []
     j = 0
     key_len = len(keyword)
-    for letter in ciphertext:
-        if letter.isalpha():
-            key_letter = keyword[j % key_len]
-            if key_letter.isupper():
-                shift = ord(key_letter) - ord("A")
+    key_upper = keyword.upper()
+
+    for ch in ciphertext:
+        shift = ord(key_upper[j % key_len]) - ord('A')
+        if ch.isalpha():
+            if ch.isupper():
+                result.append(chr((ord(ch) - ord('A') - shift) % 26 + ord('A')))
             else:
-                shift = ord(key_letter) - ord("a")
-            if letter.isupper():
-                new_code = (ord(letter) - ord("A") - shift) % 26 + ord("A")
-                plaintext += chr(new_code)
-            else:
-                new_code = (ord(letter) - ord("a") - shift) % 26 + ord("a")
-                plaintext += chr(new_code)
-                j += 1
+                result.append(chr((ord(ch) - ord('a') - shift) % 26 + ord('a')))
         else:
-            plaintext += letter
-    return plaintext
+            result.append(ch)
+        j += 1  # advance key regardless of ch type
+
+    return ''.join(result)

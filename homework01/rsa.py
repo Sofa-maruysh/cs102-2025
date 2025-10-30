@@ -18,7 +18,8 @@ def is_prime(n: int) -> bool:
     if n % 2 == 0:
         return False
     i = 3
-    while i * i <= n:
+    limit = int(n**0.5)
+    while i <= limit:
         if n % i == 0:
             return False
         i += 2
@@ -70,11 +71,13 @@ def generate_keypair(p: int, q: int) -> tp.Tuple[tp.Tuple[int, int], tp.Tuple[in
     phi = (p - 1) * (q - 1)
 
     # Choose an integer e such that e and phi(n) are coprime
-    e = random.randrange(2, phi)
+    e = random.randrange(1, phi)
 
     # Use Euclid's Algorithm to verify that e and phi(n) are coprime
-    while gcd(e, phi) != 1:
-        e = random.randrange(2, phi)
+    g = gcd(e, phi)
+    while g != 1:
+        e = random.randrange(1, phi)
+        g = gcd(e, phi)
 
     # Use Extended Euclid's Algorithm to generate the private key
     d = multiplicative_inverse(e, phi)

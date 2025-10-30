@@ -1,5 +1,6 @@
-import typing as tp
 import random
+import typing as tp
+
 
 def is_prime(n: int) -> bool:
     """

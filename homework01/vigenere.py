@@ -1,5 +1,7 @@
 from typing import List
 
+ALPHABET = 26
+
 
 def encrypt_vigenere(plaintext: str, keyword: str) -> str:
     """
@@ -18,16 +20,15 @@ def encrypt_vigenere(plaintext: str, keyword: str) -> str:
     key_len = len(keyword)
     key_upper = keyword.upper()
 
-    for ch in plaintext:
+    for j, ch in enumerate(plaintext):
         shift = ord(key_upper[j % key_len]) - ord("A")
         if ch.isalpha():
             if ch.isupper():
-                result.append(chr((ord(ch) - ord("A") + shift) % 26 + ord("A")))
+                result.append(chr((ord(ch) - ord("A") + shift) % ALPHABET + ord("A")))
             else:
-                result.append(chr((ord(ch) - ord("a") + shift) % 26 + ord("a")))
+                result.append(chr((ord(ch) - ord("a") + shift) % ALPHABET + ord("a")))
         else:
             result.append(ch)
-        j += 1  # advance key regardless of ch type
 
     return "".join(result)
 
@@ -49,15 +50,14 @@ def decrypt_vigenere(ciphertext: str, keyword: str) -> str:
     key_len = len(keyword)
     key_upper = keyword.upper()
 
-    for ch in ciphertext:
+    for j, ch in enumerate(ciphertext):
         shift = ord(key_upper[j % key_len]) - ord("A")
         if ch.isalpha():
             if ch.isupper():
-                result.append(chr((ord(ch) - ord("A") - shift) % 26 + ord("A")))
+                result.append(chr((ord(ch) - ord("A") - shift) % ALPHABET + ord("A")))
             else:
-                result.append(chr((ord(ch) - ord("a") - shift) % 26 + ord("a")))
+                result.append(chr((ord(ch) - ord("a") - shift) % ALPHABET + ord("a")))
         else:
             result.append(ch)
-        j += 1  # advance key regardless of ch type
 
     return "".join(result)

@@ -4,6 +4,7 @@
 заменяя каждую букву на отражённую с противоположного конца алфавита.
 """
 
+
 def encrypt_atbash(plaintext: str) -> str:
     alphabet = "abcdefghijklmnopqrstuvwxyz"
     n = len(alphabet)

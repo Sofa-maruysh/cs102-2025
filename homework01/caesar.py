@@ -1,3 +1,6 @@
+ALPHABET = 26
+
+
 def encrypt_caesar(plaintext: str, shift: int = 3) -> str:
     """
     Encrypts plaintext using a Caesar cipher.
@@ -13,13 +16,10 @@ def encrypt_caesar(plaintext: str, shift: int = 3) -> str:
     """
     ciphertext = ""
     for letter in plaintext:
-        if "A" <= letter <= "Z":
+        if letter.isalpha():
+            base = ord("A") if letter.isupper() else ord("a")
             code = ord(letter)
-            new_code = (code - ord("A") + shift) % 26 + ord("A")
-            ciphertext += chr(new_code)
-        elif "a" <= letter <= "z":
-            code = ord(letter)
-            new_code = (code - ord("a") + shift) % 26 + ord("a")
+            new_code = (code - base + shift) % ALPHABET + base
             ciphertext += chr(new_code)
         else:
             ciphertext += letter
@@ -41,13 +41,10 @@ def decrypt_caesar(ciphertext: str, shift: int = 3) -> str:
     """
     plaintext = ""
     for letter in ciphertext:
-        if "A" <= letter <= "Z":
+        if letter.isalpha():
+            base = ord("A") if letter.isupper() else ord("a")
             code = ord(letter)
-            new_code = (code - ord("A") - shift) % 26 + ord("A")
-            plaintext += chr(new_code)
-        elif "a" <= letter <= "z":
-            code = ord(letter)
-            new_code = (code - ord("a") - shift) % 26 + ord("a")
+            new_code = (code - base - shift) % ALPHABET + base
             plaintext += chr(new_code)
         else:
             plaintext += letter

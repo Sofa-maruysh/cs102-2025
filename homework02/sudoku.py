@@ -1,5 +1,7 @@
 import pathlib
 import typing as tp
+import random
+import copy
 
 T = tp.TypeVar("T")
 
@@ -235,6 +237,24 @@ def generate_sudoku(N: int) -> tp.List[tp.List[str]]:
     >>> check_solution(solution)
     True
     """
+    grid = [['.' for _ in range(9)] for _ in range(9)]
+    
+    solved = solve(grid) 
+    if not solved:
+        raise RuntimeError("Не удалось сгенерировать полное решение судоку")
+    full_solution = copy.deepcopy(solved)
+    
+    filled_cells = max(0, min(N, 81))
+    cells_to_clear = 81 - filled_cells
+
+    cells = [(r, c) for r in range(9) for c in range(9)]
+    random.shuffle(cells)
+
+    for i in range(cells_to_clear):
+        r, c = cells[i]
+        full_solution[r][c] = '.'
+    
+    return full_solution
     pass
 
 

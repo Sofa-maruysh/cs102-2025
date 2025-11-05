@@ -178,6 +178,39 @@ def solve(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.List[tp.List[str]]]:
 def check_solution(solution: tp.List[tp.List[str]]) -> bool:
     """ Если решение solution верно, то вернуть True, в противном случае False """
     # TODO: Add doctests with bad puzzles
+    size = 9
+    digits = set(str(i) for i in range(1, 10))
+
+    for row in solution:
+        if len(row) != size:
+            return False
+        vals = row
+        # Проверяем отсутствие пустых клеток и только цифры 1-9
+        if any(v not in digits for v in vals):
+            return False
+        if len(set(vals)) != size:
+            return False
+
+    for col in range(size):
+        vals = [solution[row][col] for row in range(size)]
+        if any(v not in digits for v in vals):
+            return False
+        if len(set(vals)) != size:
+            return False
+
+    block_size = 3
+    for block_row in range(0, size, block_size):
+        for block_col in range(0, size, block_size):
+            vals = []
+            for r in range(block_row, block_row + block_size):
+                for c in range(block_col, block_col + block_size):
+                    vals.append(solution[r][c])
+            if any(v not in digits for v in vals):
+                return False
+            if len(set(vals)) != size:
+                return False
+
+    return True
     pass
 
 

@@ -114,6 +114,11 @@ def find_empty_positions(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.Tuple[in
     >>> find_empty_positions([['1', '2', '3'], ['4', '5', '6'], ['.', '8', '9']])
     (2, 0)
     """
+    for i, row in enumerate(grid):
+        for j, val in enumerate(row):
+            if val == '.':
+                return (i, j)
+    return None
     pass
 
 
@@ -127,6 +132,19 @@ def find_possible_values(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -
     >>> values == {'2', '5', '9'}
     True
     """
+    digits = set(str(i) for i in range(1, 10))
+    row_vals = set(grid[pos[0]])
+    col_vals = set(grid[i][pos[1]] for i in range(9))
+    
+    block_row_start = (pos[0] // 3) * 3
+    block_col_start = (pos[1] // 3) * 3
+    block_vals = set()
+    for r in range(block_row_start, block_row_start + 3):
+        for c in range(block_col_start, block_col_start + 3):
+            block_vals.add(grid[r][c])
+            
+    used = row_vals | col_vals | block_vals
+    return [d for d in digits if d not in used]
     pass
 
 
@@ -142,6 +160,18 @@ def solve(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.List[tp.List[str]]]:
     >>> solve(grid)
     [['5', '3', '4', '6', '7', '8', '9', '1', '2'], ['6', '7', '2', '1', '9', '5', '3', '4', '8'], ['1', '9', '8', '3', '4', '2', '5', '6', '7'], ['8', '5', '9', '7', '6', '1', '4', '2', '3'], ['4', '2', '6', '8', '5', '3', '7', '9', '1'], ['7', '1', '3', '9', '2', '4', '8', '5', '6'], ['9', '6', '1', '5', '3', '7', '2', '8', '4'], ['2', '8', '7', '4', '1', '9', '6', '3', '5'], ['3', '4', '5', '2', '8', '6', '1', '7', '9']]
     """
+    empty_pos = find_empty_positions(grid)
+    if not empty_pos:
+        return grid  # решение найдено, пустых позиций нет
+    
+    row, col = empty_pos
+    for val in find_possible_values(grid, empty_pos):
+        grid[row][col] = val
+        if solve(grid):
+            return grid
+        grid[row][col] = '.'  # откат
+    
+    return None
     pass
 
 

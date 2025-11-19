@@ -39,12 +39,7 @@ def group(values: tp.List[T], n: int) -> tp.List[tp.List[T]]:
     >>> group([1,2,3,4,5,6,7,8,9], 3)
     [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
     """
-    matrix: tp.List[tp.List[T]] = []
-    for i in range(0, len(values), n):
-        row = values[i : i + n]
-        matrix.append(row)
-    return matrix
-    pass
+    return [values[i : i + n] for i in range(0, len(values), n)]
 
 
 def get_row(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str]:
@@ -58,7 +53,6 @@ def get_row(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str
     """
     row, _ = pos
     return grid[row]
-    pass
 
 
 def get_col(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str]:
@@ -71,8 +65,7 @@ def get_col(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str
     ['3', '6', '9']
     """
     _, col = pos
-    return [grid[i][col] for i in range(len(grid))]
-    pass
+    return [row[col] for row in grid]
 
 
 def get_block(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str]:
@@ -94,7 +87,6 @@ def get_block(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[s
         for c in range(block_col_start, block_col_start + block_size):
             block_vals.append(grid[r][c])
     return block_vals
-    pass
 
 
 def find_empty_positions(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.Tuple[int, int]]:
@@ -111,7 +103,6 @@ def find_empty_positions(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.Tuple[in
             if val == ".":
                 return (i, j)
     return None
-    pass
 
 
 def find_possible_values(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.Set[str]:
@@ -128,16 +119,10 @@ def find_possible_values(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -
     row_vals = set(grid[pos[0]])
     col_vals = set(grid[i][pos[1]] for i in range(9))
 
-    block_row_start = (pos[0] // 3) * 3
-    block_col_start = (pos[1] // 3) * 3
-    block_vals = set()
-    for r in range(block_row_start, block_row_start + 3):
-        for c in range(block_col_start, block_col_start + 3):
-            block_vals.add(grid[r][c])
+    block_vals = set(get_block(grid, pos))
 
     used = row_vals | col_vals | block_vals
-    return set([d for d in digits if d not in used])
-    pass
+    return digits - used
 
 
 def solve(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.List[tp.List[str]]]:
@@ -164,7 +149,6 @@ def solve(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.List[tp.List[str]]]:
         grid[row][col] = "."  # откат
 
     return None
-    pass
 
 
 def check_solution(solution: tp.List[tp.List[str]]) -> bool:
@@ -173,37 +157,26 @@ def check_solution(solution: tp.List[tp.List[str]]) -> bool:
     size = 9
     digits = set(str(i) for i in range(1, 10))
 
-    for row in solution:
-        if len(row) != size:
-            return False
-        vals = row
-        # Проверяем отсутствие пустых клеток и только цифры 1-9
-        if any(v not in digits for v in vals):
-            return False
-        if len(set(vals)) != size:
+    for i in range(size):
+
+        row_set = set(solution[i])
+        if row_set != digits:
             return False
 
-    for col in range(size):
-        vals = [solution[row][col] for row in range(size)]
-        if any(v not in digits for v in vals):
-            return False
-        if len(set(vals)) != size:
+        col_set = set(solution[r][i] for r in range(size))
+        if col_set != digits:
             return False
 
-    block_size = 3
-    for block_row in range(0, size, block_size):
-        for block_col in range(0, size, block_size):
-            vals = []
-            for r in range(block_row, block_row + block_size):
-                for c in range(block_col, block_col + block_size):
-                    vals.append(solution[r][c])
-            if any(v not in digits for v in vals):
-                return False
-            if len(set(vals)) != size:
+    for block_row in range(0, size, 3):
+        for block_col in range(0, size, 3):
+            block_vals = set()
+            for r in range(block_row, block_row + 3):
+                for c in range(block_col, block_col + 3):
+                    block_vals.add(solution[r][c])
+            if block_vals != digits:
                 return False
 
     return True
-    pass
 
 
 def generate_sudoku(N: int) -> tp.List[tp.List[str]]:
@@ -234,7 +207,7 @@ def generate_sudoku(N: int) -> tp.List[tp.List[str]]:
         raise RuntimeError("Не удалось сгенерировать полное решение судоку")
     full_solution = copy.deepcopy(solved)
 
-    filled_cells = max(0, min(N, 81))
+    filled_cells = N
     cells_to_clear = 81 - filled_cells
 
     cells = [(r, c) for r in range(9) for c in range(9)]
@@ -245,7 +218,6 @@ def generate_sudoku(N: int) -> tp.List[tp.List[str]]:
         full_solution[r][c] = "."
 
     return full_solution
-    pass
 
 
 if __name__ == "__main__":

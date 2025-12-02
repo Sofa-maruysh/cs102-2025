@@ -132,21 +132,22 @@ def shortest_path(
     if k == 0:
         return None
 
-    while k > 1:
+    while int(k) > 1:
         path.append((x, y))
         for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
             nx, ny = x + dx, y + dy
             if 0 <= nx < len(grid) and 0 <= ny < len(grid[0]):
-                if grid[nx][ny] == k - 1:
+                if grid[nx][ny] == int(k) - 1:
                     x, y = nx, ny
-                    k -= 1
+                    k_int = int(k)
+                    k_int -= 1
                     break
         else:
             grid[x][y] = " "
             if not path:
                 return None
             x, y = path.pop()
-            k += 1
+            k_int += 1
 
     path.append((x, y))
     path.reverse()

@@ -39,6 +39,11 @@ if __name__ == "__main__":
 
     CELL_SIZE = 10
     GRID = bin_tree_maze(N, M)
+    _, PATH = solve_maze(GRID)
+    while not PATH:
+        print("No solutions. Regenerating maze...")
+        GRID = bin_tree_maze(N, M)
+        _, PATH = solve_maze(GRID)
 
     window = tk.Tk()
     window.title('Maze')
